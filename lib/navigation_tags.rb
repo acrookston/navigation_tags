@@ -7,13 +7,14 @@ module NavigationTags
   desc %{Render a navigation menu. Walks down the directory tree, expanding the tree up to the current page.
 
     *Usage:*
-    <pre><code><r:nav [id="subnav"] [root=\"/products\"] [include_root=\"true\"] [depth=\"2\"] [expand_all=\"true\"]/></code></pre> 
+    <pre><code><r:nav [id="subnav"] [root=\"/products\"] [include_root=\"true\"] [depth=\"2\"] [expand_all=\"true\"] [exclude=\"/search/|/rss/\"]/></code></pre> 
     *Attributes:*
     
     root: defaults to "/", where to start building the navigation from, you can i.e. use "/products" to build a subnav
     include_root: defaults to false, set to true to include the root page (i.e. Home)
     ids_for_lis: defaults to false, enable this to give each li an id (it's slug prefixed with nav_)
     ids_for_links: defaults to false, enable this to give each link an id (it's slug prefixed with nav_)
+    exclude: defaults to false, | -separated list of urls to exclude from the navigation. Eg: /search/ | /rss/ | /my_page/
     
     depth: defaults to 1, which means no sub-ul's, set to 2 or more for a nested list
     expand_all: defaults to false, enable this to have all li's create sub-ul's of their children, i.o. only the currently active li
@@ -26,8 +27,13 @@ module NavigationTags
     raise NavTagError, "No page found at \"#{root_url}\" to build navigation from." if root.class_name.eql?('FileNotFoundPage')
     
     depth = tag.attr.delete('depth') || 1
-    ['include_root', 'ids_for_lis', 'ids_for_links', 'expand_all', 'first_set'].each do |prop|
+    ['include_root', 'ids_for_lis', 'ids_for_links', 'expand_all', 'first_set', 'exclude'].each do |prop|
       eval "@#{prop} = tag.attr.delete('#{prop}') || false"
+    end
+    
+    if @exclude
+      @exclude = @exclude.split('|')
+      @exclude.map {|v| v.strip! }
     end
     
     if @include_root
@@ -41,7 +47,13 @@ module NavigationTags
     end
     
     for child in root.children
-      tree << tag.render('sub-nav', {:page => child, :depth => depth.to_i - 1 })
+      if @exclude
+        unless @exclude.include? child.url
+          tree << tag.render('sub-nav', {:page => child, :depth => depth.to_i - 1 })
+        end
+      else
+        tree << tag.render('sub-nav', {:page => child, :depth => depth.to_i - 1 })
+      end
     end
     
     if tag.attr

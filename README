@@ -4,7 +4,7 @@ Provides hierarchical tree navigation based on Radiant's site structure. Outputs
 
 == Usage
 
-  <r:nav [root="/"] [include_root="true"] [depth="2"] [expand_all="true"] [ids_for_lis="true"] />
+  <r:nav [root="/"] [include_root="true"] [depth="2"] [expand_all="true"] [ids_for_lis="true"] [ignore=\"/search/|/rss/\"] />
 
   Given this directory tree: 
 
@@ -35,7 +35,9 @@ Provides hierarchical tree navigation based on Radiant's site structure. Outputs
   * include_root: defaults to false, 		  set to true to include the root page (i.e. Home)
   * depth: 		defaults to 2,				      which will print out the first two levels of pages.
   * expand_all: 	defaults to false, 			enable this to have all li's create sub-ul's of their children, i.o. only the currently active li
+  * exclude:	defaults to false,          | -separated list of urls to exclude from the navigation. Eg: /search/ | /rss/ | /my_page/
   * id, class, monkeyballs, ... 	        will be used as html attributes for the ul
+
 
 = CREDITS
 
