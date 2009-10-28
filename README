@@ -4,7 +4,8 @@ Provides hierarchical tree navigation based on Radiant's site structure. Outputs
 
 == Usage
 
-  <r:nav [root="/"] [include_root="true"] [depth="2"] [expand_all="true"] [ids_for_lis="true"] [ignore=\"/search/|/rss/\"] />
+  <r:nav [root="/"] [include_root="true"] [depth="2"] [expand_all="true"] [ids_for_lis="true"] [exclude=\"/search/|/rss/\"] />
+
 
   Given this directory tree: 
 
